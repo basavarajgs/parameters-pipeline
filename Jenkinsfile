@@ -1,53 +1,27 @@
 pipeline {
- agent none
-environment {
-NAME='basava'
-}
- stages { 
-   stage ('BUILD') {
-    agent { label 'master'}
-     steps {
-       echo "$NAME"
-      sh 'sleep 5'
-	   echo $NAME
-     }
-   }
- stage ('TEST PARELLEL') {
-  parallel {
-  stage ('TEST ON CHROME') {
-   agent { label 'master'}
-   steps {
-    echo "this is test on chrome browser"
-      sh 'sleep 5'
-     }
-   }
-  stage ('TEST ON SAFARI') {
-   agent { label 'master'}
-   steps {
-    echo "this is test on safari browser"
-      sh 'sleep 5'
-     }
-   }
+  agent any
+  parameters {
+      string defaultValue: 'TEST', description: 'environment to deploy the application', name: 'ENV', trim: true
+      choice choices: ['main', 'master'], description: 'environment to deploy the application', name: 'BRANCH'
   }
- }
-  stage ('DEPLOY') {
-   parallel {
-    stage ('DEPLOY ON SERVER 1') {
-   agent { label 'master'}
- steps {
-  echo " this is server1 deploy "
-  sh 'sleep 5'
- }
+ environment {
+         DEPLOY_BRANCH = "$BRANCH"
+         DEPLOY_ENV = "$ENV"
+      }
+  stages {
+    stage('BUILD') {
+      steps {
+        echo "Deploying to ${params.ENV}"
+        echo "Code from ${params.BRANCH} branch"
+        sh '''
+              echo Deploying to ${BRANCH}
+              echo Code from ${ENV} branch
+              exit 0
+           '''
+      }
+    }
   }
-      stage ('DEPLOY ON SERVER 2') {
-   agent { label 'master'}
- steps {
-  echo " this is server2 deploy "
-  sh 'sleep 5'
- }
 }
- }
-}
- }
-}
+
+    
 
