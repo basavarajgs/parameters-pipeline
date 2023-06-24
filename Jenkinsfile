@@ -9,7 +9,7 @@ NAME='basava'
      steps {
        echo "$NAME"
       sh 'sleep 5'
-	  $NAME
+	   echo $NAME
      }
    }
  stage ('TEST PARELLEL') {
